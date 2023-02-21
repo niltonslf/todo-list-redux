@@ -1,7 +1,19 @@
 import { Button, Checkbox, Divider, Flex, Heading, Input, Text, VStack } from '@chakra-ui/react'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addTodo } from './features/todo'
+import { useAppSelector } from './hooks/use-selector'
 
-function App() {
-  const items = [1, 2, 3, 4, 5, 6]
+const App = () => {
+  const [item, setItem] = useState('')
+
+  const items = useAppSelector((state) => state.todo.items)
+  const dispatch = useDispatch()
+
+  const handleAddTodo = () => {
+    dispatch(addTodo(item))
+    setItem('')
+  }
 
   return (
     <Flex justifyContent='center' background='#2e2e30' width='100%' minHeight='100%' padding='2rem'>
@@ -26,7 +38,7 @@ function App() {
             <>
               <Flex gap='1rem' width='100%'>
                 <Checkbox />
-                <Text color='white'>Lorem ipusm</Text>
+                <Text color='white'>{item}</Text>
               </Flex>
               <Divider />
             </>
@@ -34,8 +46,18 @@ function App() {
         </VStack>
 
         <Flex width='100%' gap='1rem'>
-          <Input background='white' placeholder='Type new todo' />
-          <Button colorScheme='blackAlpha'>Add</Button>
+          <Input
+            background='white'
+            placeholder='Type new todo'
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
+            onKeyDown={(event) => {
+              if (event.code == 'Enter') handleAddTodo()
+            }}
+          />
+          <Button colorScheme='blackAlpha' onClick={handleAddTodo}>
+            Add
+          </Button>
         </Flex>
       </Flex>
     </Flex>
