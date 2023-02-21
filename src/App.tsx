@@ -1,7 +1,7 @@
 import { Button, Checkbox, Divider, Flex, Heading, Input, Text, VStack } from '@chakra-ui/react'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { addTodo } from './features/todo'
+import { addTodo, TodoProps, updateTodo } from './features/todo'
 import { useAppSelector } from './hooks/use-selector'
 
 const App = () => {
@@ -11,8 +11,14 @@ const App = () => {
   const dispatch = useDispatch()
 
   const handleAddTodo = () => {
-    dispatch(addTodo(item))
+    dispatch(addTodo({ name: item, isDone: false }))
     setItem('')
+  }
+
+  const handleCheckItem = (index: number) => {
+    const payload: TodoProps = { ...items[index], isDone: !items[index].isDone }
+
+    dispatch(updateTodo({ index, todo: payload }))
   }
 
   return (
@@ -34,14 +40,14 @@ const App = () => {
         </Flex>
 
         <VStack width='100%' flex={1}>
-          {items.map((item) => (
-            <>
+          {items.map((item, index) => (
+            <Fragment key={index}>
               <Flex gap='1rem' width='100%'>
-                <Checkbox />
-                <Text color='white'>{item}</Text>
+                <Checkbox isChecked={item.isDone} onChange={() => handleCheckItem(index)} />
+                <Text color='white'>{item.name}</Text>
               </Flex>
               <Divider />
-            </>
+            </Fragment>
           ))}
         </VStack>
 
